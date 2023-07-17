@@ -12,7 +12,7 @@
                     class="font-semibold mb-1"
                     :class="{'text-red-600': error}">{{message}}</p>
                 </div>
-
+                
                 <input 
                 type="text"
                 v-model="categoryName"
@@ -32,6 +32,7 @@
 <script>
 export default {
     name: 'CategoryUpdateForm',
+    props: ['updateItem'],
     data() {
         return {
             categoryName: null,
@@ -39,6 +40,9 @@ export default {
             error: false,
             message: null,
             previewImgSrc: null,
+            // updItemName: null,
+            // updItemImg: null,
+            updItemId: null,
         }
     },
     methods: {
@@ -56,9 +60,18 @@ export default {
             }
             console.log(this.previewImgSrc)
         },
+        handleUpdateItem() {
+            if(this.updateItem != null) {
+                this.updItemId = this.updateItem.id;
+                this.categoryName = this.updateItem.name;
+                this.previewImgSrc = this.updateItem.image;
+            }
+        }
     },
     watch: {
-
+        updateItem() {
+            this.handleUpdateItem();
+        }
     }
 }
 </script>

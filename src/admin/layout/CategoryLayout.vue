@@ -5,7 +5,10 @@
         <category-create-form @addCategory="fetchCategory"></category-create-form>
 
         <!-- category update form modal  -->
-        <category-update-form class="hidden fixed top-0 left-0 z-[1000] w-full h-screen backdrop-blur-sm"></category-update-form>
+        <category-update-form 
+        :update-item="updateCategoryItem"
+        v-show="categoryUpdForm"
+        class="fixed top-0 left-0 z-[1000] w-full h-screen backdrop-blur-sm"></category-update-form>
         <!-- category fetching  -->
         <table class="table-auto w-[600px] border border-gray-300 mt-5">
             <thead class="bg-gray-400 h-10">
@@ -28,7 +31,7 @@
                     <td>2</td>
                     <td>
                         <button 
-                        @click="showUpdFormModal"
+                        @click="showUpdFormModal(category)"
                         class="bg-blue-600 text-white px-2 py-1 rounded-md border border-blue-600 hover:bg-blue-700">
                             <i class="fa-solid fa-pen-to-square"></i> update
                         </button>
@@ -63,6 +66,8 @@ export default {
         return {
             categoryInput: null,
             categories: null,
+            categoryUpdForm: false,
+            updateCategoryItem: null,
         }
     },
     mounted() {
@@ -89,8 +94,15 @@ export default {
         deleteCategory(id) {
             console.log(id)
         },
-        showUpdFormModal(id) {
-            console.log(id)
+        showUpdFormModal(category) {
+            this.updateCategoryItem = category;
+            this.categoryUpdForm = true;
+        }
+    },
+    watch: {
+        updateCategoryItem(value) {
+            this.updateCategoryItem = value
+            console.log(value.name)
         }
     }
 }
