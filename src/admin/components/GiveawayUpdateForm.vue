@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-center">
         <div class="bg-gray-100 p-2 border border-gray-600 rounded-md">
-            <h2 class="text-xl text-gray-700 mb-2">Category/ Update</h2>
+            <h2 class="text-xl text-gray-700 mb-2">Giveaway/ Update</h2>
 
             <div class="text-green-600">
                 <p 
@@ -22,9 +22,9 @@
                 
                 <input 
                 type="text"
-                v-model="categoryName"
+                v-model="giveawayName"
                 class="w-96 input-one shadow-md"
-                placeholder="Category Name"><br>
+                placeholder="Giveaway Name"><br>
                 <input type="file" @change="handleFileInput">
 
                 <div class="flex justify-between mt-2">
@@ -36,15 +36,16 @@
     </div>
 </template>
 
+
 <script>
 import axios from 'axios';
 
 export default {
-    name: 'CategoryUpdateForm',
+    name: 'GiveawayUpdateForm',
     props: ['updateItem'],
     data() {
         return {
-            categoryName: null,
+            giveawayName: null,
             imageFile: null,
             errorMsg: {
                 name: null,
@@ -73,7 +74,7 @@ export default {
         handleUpdateItem() {
             if(this.updateItem != null) {
                 this.updItemId = this.updateItem.id;
-                this.categoryName = this.updateItem.name;
+                this.giveawayName = this.updateItem.name;
                 this.previewImgSrc = this.updateItem.image;
             }
         },
@@ -87,11 +88,11 @@ export default {
         update() {
             const token = localStorage.getItem('access-token');
             let formData = new FormData();
-            formData.append('name', this.categoryName);
+            formData.append('name', this.giveawayName);
             formData.append('image', this.imageFile);
             // console.log(formData);
             
-            axios.post('http://127.0.0.1:8000/api/admin/category/'+this.updItemId+'/update', formData, {
+            axios.post('http://127.0.0.1:8000/api/admin/giveaway/'+this.updItemId+'/update', formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
                     'Authorization' : `Bearer ${token}`,

@@ -116,6 +116,14 @@ export default {
                     name: 'Category'
                 },
                 {
+                    path: '/admin/giveaway',
+                    name: 'Giveaway'
+                },
+                {
+                    path: '/admin/promotion/list',
+                    name: 'Promotion'
+                },
+                {
                     path: '/admin/product',
                     name: 'Product'
                 },

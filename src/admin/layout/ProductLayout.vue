@@ -8,9 +8,6 @@
             rounded-md float-right">
                 <i class="fa-solid fa-plus"></i> Create product
             </router-link>
-            <!-- <button class="bg-blue-600 text-white hover:bg-blue-700 border-blue-700 px-4 py-2 mb-3 rounded-md float-right">
-                <i class="fa-solid fa-plus"></i> Create product
-            </button> -->
         </div>
 
         <table class="table-auto w-full border border-gray-300">

@@ -8,13 +8,15 @@
         <category-update-form 
         :update-item="updateCategoryItem"
         v-show="categoryUpdForm"
-        class="fixed top-0 left-0 z-[1000] w-full h-screen backdrop-blur-sm"></category-update-form>
+        class="fixed top-0 left-0 z-[1000] w-full h-screen backdrop-blur-sm"
+        @closeform="closeUpdFormModal"></category-update-form>
+
         <!-- category fetching  -->
-        <table class="table-auto w-[600px] border border-gray-300 mt-5">
-            <thead class="bg-gray-400 h-10">
+        <table class="table-auto w-full border border-gray-300 mt-8">
+            <thead class="bg-gray-300 h-14">
                 <tr>
                     <th>No.</th>
-                    <th>Name</th>
+                    <th>Category Name</th>
                     <th>Image</th>
                     <th>Product Count</th>
                     <th colspan="2">Actions</th>
@@ -24,28 +26,32 @@
                 <tr 
                 v-for="(category, index) in categories"
                 :key="category.id"
-                class="text-center border-0 border-b-2 border-gray-400">
-                    <td>{{index}}</td>
+                class="text-center border-0 border-b-2 border-gray-300">
+                    <td>{{index+1}}</td>
                     <td>{{category.name}}</td>
                     <td><img :src="category.image" alt="img" class="w-28 mx-auto"></td>
                     <td>2</td>
                     <td>
                         <button 
                         @click="showUpdFormModal(category)"
-                        class="bg-blue-600 text-white px-2 py-1 rounded-md border border-blue-600 hover:bg-blue-700">
-                            <i class="fa-solid fa-pen-to-square"></i> update
+                        class="blue-btn">
+                            update
                         </button>
                     </td>
                     <td>
                         <button 
                         @click="deleteCategory(category.id)"
-                        class="bg-red-600 text-white px-2 py-1 rounded-md border border-red-600 hover:bg-red-700">
-                            <i class="fa-regular fa-trash-can"></i> delete
+                        class="red-btn">
+                            delete
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <!-- paginator  -->
+        <paginator-one v-if="pagination" :data="paginationData" @changepage="fetchCategory"></paginator-one>
+
     </div>
 </template>
 
@@ -54,18 +60,22 @@
 import CategoryCreateForm from '../components/CategoryCreateForm.vue'
 import CategoryUpdateForm from '../components/CategoryUpdateForm.vue'
 import axios from 'axios'
+import PaginatorOne from '../components/PaginatorOne.vue'
 
 
 export default {
     name: 'CategoryLayout',
     components: {
         CategoryCreateForm,
-        CategoryUpdateForm
+        CategoryUpdateForm,
+        PaginatorOne,
     },
     data() {
         return {
-            categoryInput: null,
+            // categoryInput: null,
             categories: null,
+            paginationData: null,
+            pagination: false,
             categoryUpdForm: false,
             updateCategoryItem: null,
         }
@@ -74,36 +84,46 @@ export default {
         this.fetchCategory();
     },
     methods: {
-        fetchCategory() {
+        // fetching ---
+        fetchCategory(page=1) {
             const vm = this;
-            const token = localStorage.getItem('access-token');
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
 
-            axios.get('http://127.0.0.1:8000/api/category/list', config)
+            axios.get('http://127.0.0.1:8000/api/category/list?page='+page)
             .then(response => {
-                vm.categories = response.data;
-                console.log(vm.categories);
+                vm.categories = response.data.data;
+                vm.pagination = true;
+                vm.paginationData = response.data;
             })
             .catch(error => {
                 console.log(error)
             })
-            .finally(() => {
-                console.log('finished')
+        },
+
+        // deleting ---
+        deleteCategory(id) {
+            let vm = this;
+            const token = localStorage.getItem('access-token');
+            let config = { headers : {'Authorization' : `Bearer ${token}`} };
+            axios.delete('http://127.0.0.1:8000/api/admin/category/'+id+'/delete', config) 
+            .then(() => {
+                this.fetchCategory(vm.paginationData.current_page);
+            })
+            .catch(error => {
+                console.log(error)
             })
         },
-        deleteCategory(id) {
-            console.log(id)
-        },
+
+        // updating ---
         showUpdFormModal(category) {
             this.updateCategoryItem = category;
             this.categoryUpdForm = true;
+        },
+        closeUpdFormModal() {
+            this.categoryUpdForm = false
+            // refetch page 
+            this.fetchCategory(this.paginationData.current_page);
         }
     },
-    watch: {
-        updateCategoryItem(value) {
-            this.updateCategoryItem = value
-            console.log(value.name)
-        }
-    }
+
 }
 </script>

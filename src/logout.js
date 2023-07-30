@@ -5,7 +5,7 @@ function logout(to, from, next) {
       let config = { headers : {'Authorization' : `Bearer ${token}`} };
       let data = {};
       
-      axios.post('http://127.0.0.1:8000/api/logout', data, config)
+      axios.post('http://127.0.0.1:8000/api/user/logout', data, config)
       .then(() => {
         localStorage.removeItem('access-token');
         localStorage.removeItem('user-data');

@@ -15,6 +15,11 @@ import ProfileLayout from './admin/layout/ProfileLayout'
 import RegisterLayout from './admin/layout/RegisterLayout'
 import ContactLayout from './admin/layout/ContactLayout'
 import ProductCreateLayout from './admin/layout/ProductCreateLayout'
+import GiveawayLayout from './admin/layout/GiveawayLayout'
+import PromotionLayout from './admin/layout/PromotionLayout'
+import PromotionList from './admin/components/PromotionList'
+import PromotionCreate from './admin/components/PromotionCreate'
+import PromotionUpdate from './admin/components/PromotionUpdate'
 
 import HomePage from './pages/HomePage'
 import MenuPage from './pages/MenuPage'
@@ -28,7 +33,7 @@ import ProfilePage from './pages/ProfilePage'
 Vue.use(VueRouter);
 
 
-
+// routes 
 const routes = [
   // Admin routes 
     {
@@ -44,6 +49,28 @@ const routes = [
         {
           path: 'category',
           component: CategoryLayout,
+        },
+        {
+          path: 'giveaway',
+          component: GiveawayLayout,
+        },
+        {
+          path: 'promotion',
+          component: PromotionLayout,
+          children: [
+            {
+              path: 'list',
+              component: PromotionList
+            },
+            {
+              path: 'create',
+              component: PromotionCreate,
+            },
+            {
+              path: 'update',
+              component: PromotionUpdate,
+            }
+          ]
         },
         {
           path: 'product',
