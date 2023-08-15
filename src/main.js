@@ -14,12 +14,14 @@ import OrderLayout from './admin/layout/OrderLayout'
 import ProfileLayout from './admin/layout/ProfileLayout'
 import RegisterLayout from './admin/layout/RegisterLayout'
 import ContactLayout from './admin/layout/ContactLayout'
-import ProductCreateLayout from './admin/layout/ProductCreateLayout'
 import GiveawayLayout from './admin/layout/GiveawayLayout'
 import PromotionLayout from './admin/layout/PromotionLayout'
 import PromotionList from './admin/components/PromotionList'
 import PromotionCreate from './admin/components/PromotionCreate'
 import PromotionUpdate from './admin/components/PromotionUpdate'
+import ProductCreate from './admin/components/ProductCreate'
+import ProductUpdate from './admin/components/ProductUpdate'
+import ProductList from './admin/components/ProductList'
 
 import HomePage from './pages/HomePage'
 import MenuPage from './pages/MenuPage'
@@ -43,56 +45,81 @@ const routes = [
       component: TemplateIndex,
       children: [
         {
+        name: 'dashboard',
         path: '',
         component: DashboardLayout,
         },
         {
+          name: 'adminCategory',
           path: 'category',
           component: CategoryLayout,
         },
         {
+          name: 'adminGiveaway',
           path: 'giveaway',
           component: GiveawayLayout,
         },
         {
+          name: 'adminPromotion',
           path: 'promotion',
           component: PromotionLayout,
           children: [
             {
+              name: 'adminPromotionList',
               path: 'list',
               component: PromotionList
             },
             {
+              name: 'adminPromotionCreate',
               path: 'create',
               component: PromotionCreate,
             },
             {
-              path: 'update',
+              name: 'adminPromotionUpdate',
+              path: ':id/update', 
               component: PromotionUpdate,
             }
           ]
         },
         {
+          name: 'adminProduct',
           path: 'product',
           component: ProductLayout,
+          children: [
+            {
+              name: 'adminProductList',
+              path: 'list',
+              component: ProductList,
+            },
+            {
+              name: 'adminProductCreate',
+              path: 'create',
+              component: ProductCreate,
+            },
+            {
+              name: 'adminProductUpdate',
+              path: ':id/update',
+              component: ProductUpdate,
+            },
+          ]
         },
         {
-          path: 'product/create',
-          component: ProductCreateLayout,
-        },
-        {
+          name: 'adminOrder',
           path: 'order',
           component: OrderLayout,
         },
         {
+          name: 'adminProfile',
           path: 'profile',
           component: ProfileLayout,
         },
         {
+          name: 'adminRegister',
           path: 'register',
           component: RegisterLayout,
         },
         {
+          name: 'adminContact',
           path: '/admin/contact',
           component: ContactLayout,
         },

@@ -29,7 +29,7 @@ export default {
     name: 'CategoryCreateForm',
     data() {
         return {
-            categoryName: '',
+            categoryName: null,
             imageFile: null,
             error: false,
             message: null,
@@ -43,8 +43,8 @@ export default {
             const vm = this;
             const token = localStorage.getItem('access-token');
             const formData = new FormData();
-            formData.append('name', this.categoryName);
-            formData.append('image', this.imageFile);
+            this.categoryName != null ? formData.append('name', this.categoryName) : null;
+            this.imageFile != null ? formData.append('image', this.imageFile) : null;
 
             axios.post('http://127.0.0.1:8000/api/admin/category/create', formData, {
                 headers: {

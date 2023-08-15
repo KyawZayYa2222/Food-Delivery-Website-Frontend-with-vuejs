@@ -124,7 +124,7 @@ export default {
                     name: 'Promotion'
                 },
                 {
-                    path: '/admin/product',
+                    path: '/admin/product/list',
                     name: 'Product'
                 },
                 {

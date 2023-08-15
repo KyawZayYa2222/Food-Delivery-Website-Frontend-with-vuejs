@@ -50,7 +50,10 @@
         </table>
 
         <!-- paginator  -->
-        <paginator-one v-if="pagination" :data="paginationData" @changepage="fetchCategory"></paginator-one>
+        <paginator-one 
+        v-if="pagination" 
+        :data="paginationData" 
+        @changepage="fetchCategory"/>
 
     </div>
 </template>
@@ -72,7 +75,6 @@ export default {
     },
     data() {
         return {
-            // categoryInput: null,
             categories: null,
             paginationData: null,
             pagination: false,
@@ -88,7 +90,7 @@ export default {
         fetchCategory(page=1) {
             const vm = this;
 
-            axios.get('http://127.0.0.1:8000/api/category/list?page='+page)
+            axios.get('http://127.0.0.1:8000/api/category/paginatedlist?page='+page)
             .then(response => {
                 vm.categories = response.data.data;
                 vm.pagination = true;

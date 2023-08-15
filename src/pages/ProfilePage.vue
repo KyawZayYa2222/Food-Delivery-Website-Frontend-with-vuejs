@@ -2,22 +2,31 @@
     <div>
         <nav-bar></nav-bar>
 
-        <div class="container mx-auto min-h-screen pt-20">
+        <div class="container mx-auto min-h-screen pt-20 lg:pt-40">
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-5 mx-auto">
                 <div class="xl:col-span-2">
                     <div class="bg-gray-100 w-full xl:w-96 ms-auto">
                         <div class="flex border-0 border-b-2 bg-gray-200 border-gray-300 p-2 pb-5">
                             <div class="relative">
-                                <img src="@/assets/img/profile.jpg" class="w-28 rounded-full border border-gray-400">
-                                <button 
+                                <img v-if="image" :src="userData.image" class="w-28 rounded-full border border-gray-400">
+                                <img v-else src="@/assets/img/profile-icon.jpg" class="w-28 rounded-full border border-gray-400">
+                                <label for="fileinput"
+                                class="absolute cursor-pointer bottom-1 right-3 w-8 h-8 text-white bg-gray-600 text-center rounded-full border border-gray-700 d-flex justify-center items-center">
+                                    <i class="fa-solid fa-camera align-middle"></i>
+                                </label>
+                                <input type="file" @change="handleFile" id="fileinput" class="hidden">
+
+                                <!-- <button 
                                 class="absolute bottom-1 right-3 w-8 h-8 text-white bg-gray-600 rounded-full border border-gray-700"
                                 @click="showUploadModal=true">
                                     <i class="fa-solid fa-camera"></i>
-                                </button>
+                                </button> -->
                             </div>
                             <div class="ps-2 pt-4">
-                                <h1 class="text-2xl font-semibold text-gray-700">HTET HTET LINN LATT</h1>
-                                <h3 class="w-60 text-md font-semibold text-gray-600">Hledan, Kamayaut Township, Yangon</h3>
+                                <h1 class="text-2xl font-semibold text-gray-700">{{name ? name : "Your Name"}}</h1>
+                                <h3 class="w-60 text-md font-semibold text-gray-600">
+                                    {{address ? address : "Your address"}}
+                                </h3>
                             </div>
                         </div>
                         <ul class="flex flex-col mt-4">
@@ -40,9 +49,10 @@
         </div>
 
         <upload-image 
-        v-show="showUploadModal" 
+        v-if="showUploadModal"
         class="z-[1010]"
-        @close-modal="showUploadModal=false"></upload-image>
+        :uploadImg="uploadImg"
+        @close-modal="closeUploadModal"></upload-image>
 
         <footer-section></footer-section>
     </div>
@@ -55,6 +65,7 @@ import ProfileDetail from '@/components/ProfileDetail.vue'
 import OrderHistory from '@/components/OrderHistory.vue'
 import ChangePassword from '@/components/ChangePassword.vue'
 import UploadImage from '@/components/UploadImage.vue'
+import axios from 'axios'
 
 export default {
     name: 'ProfilePage',
@@ -70,6 +81,9 @@ export default {
         return {
             currentComponent: 'ProfileDetail',
             showUploadModal: false,
+            userData: null,
+            token: localStorage.getItem('access-token'),
+            uploadImg: null,
             componentLinks: [
                 {
                     name: 'Profile Details',
@@ -86,8 +100,48 @@ export default {
             ]
         }
     },
+    computed: {
+        name: function() {
+            return this.userData ? this.userData.name : null
+        },
+        email: function() {
+            return this.userData ? this.userData.email : null
+        },
+        phone: function() {
+            return this.userData ? this.userData.phone : null
+        },
+        address: function() {
+            return this.userData ? this.userData.address : null
+        },
+        image: function() {
+            return this.userData ? this.userData.image : null
+        },
+    },
+    mounted() {
+        this.fetchUserDetails()
+    },
     methods: {
-        
+        fetchUserDetails() {
+            let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
+
+            axios.get('http://127.0.0.1:8000/api/user/details', config)
+            .then(response => {
+                console.log(response)
+                this.userData = response.data;
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+        handleFile(e) {
+            // console.log(this.showUploadModal)
+            this.uploadImg = e.target.files[0]
+            this.showUploadModal = true
+        },
+        closeUploadModal() {
+            this.showUploadModal = false
+            this.fetchUserDetails()
+        }
     }
 }
 </script>

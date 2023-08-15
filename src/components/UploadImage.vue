@@ -14,11 +14,11 @@
                     </div>
                 </div>
                 <!-- Image file input  -->
-                <input ref="fileInput" type="file" @change="handleFile" class="mt-2">
+                <!-- <input ref="fileInput" type="file" @change="handleFile" class="mt-2"> -->
 
                 <div class="flex justify-between mt-2">
                     <button
-                    @click="showUploadModal=false"
+                    @click="closeModal"
                     class="py-1 px-2 text-white bg-gray-400 border border-gray-500 
                     rounded-md hover:bg-gray-500 transition duration-150">Cancel</button>
                     <button
@@ -35,26 +35,31 @@
 <script>
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
+import axios from 'axios'
+
 
 export default {
     name: 'UploadImage',
+    props: ['uploadImg'],
     components: {
         
     },
     mounted() {
+        this.cropImage()
     },
     data() {
         return {
-            imageFile: null,
+            croppedImageFile: null,
+            token: localStorage.getItem('access-token')
         }
     },
     methods: {
         closeModal() {
             this.$emit('close-modal');
         },
-        handleFile(e) {
+        cropImage() {
             const cropImageCon = this.$refs.cropImageCon;
-            const file = e.target.files[0];
+            const file = this.uploadImg;
             const imageSrc = URL.createObjectURL(file);
             const image = new Image();
             const vm = this;
@@ -70,15 +75,31 @@ export default {
                     autoCropArea: 0.9,
                     crop:() => {
                         const croppedCanvas = cropper.getCroppedCanvas();
-                        const croppedImageData = croppedCanvas.toDataURL();
-                        vm.imageFile = croppedImageData;
+                        const croppedImageData = croppedCanvas.toDataURL('image/png');
+                        vm.croppedImageFile = croppedImageData;
                     }
                 })
             }
             image.src = imageSrc;
         },
         uploadImage() {
-            console.log(this.imageFile);
+            console.log(this.croppedImageFile);
+            let formData = new FormData()
+            formData.append('image', this.croppedImageFile)
+            
+            axios.post('http://127.0.0.1:8000/api/user/profile-picture/update', {image: this.croppedImageFile}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${this.token}`
+                }
+            })
+            .then(response => {
+                console.log(response.data)
+                this.closeModal()
+            })
+            .catch(error => {
+                console.log(error)
+            })
         },
     }
 }
