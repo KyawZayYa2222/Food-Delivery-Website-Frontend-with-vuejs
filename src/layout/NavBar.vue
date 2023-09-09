@@ -38,7 +38,7 @@
                 
                 <router-link to="/cart" class="mx-5 text-xl">
                     <div class="relative">
-                        <span class="absolute top-[-4px] right-[-5px] z-10 text-xs text-white px-1 py-0 bg-orange-600 rounded-lg">9</span>
+                        <span class="absolute top-[-4px] right-[-5px] z-10 text-xs text-white px-1 py-0 bg-orange-600 rounded-lg">{{cartItemCount}}</span>
                         <i class="fa fa-solid fa-bag-shopping"></i>
                     </div>
                 </router-link>
@@ -53,6 +53,9 @@
 
 
 <script>
+// import { cartList } from '@/cartList.js'
+import apiService from '@/apiService'
+
 export default {
     name: 'NavBar',
     data() {
@@ -61,6 +64,7 @@ export default {
             menu: true,
             screenWidth: window.innerWidth,
             auth: localStorage.getItem('access-token'),
+            cartItemCount: null,
             LoginOrProfileLink: {
                 path: '/login',
                 name: 'Login'
@@ -92,8 +96,9 @@ export default {
 
     mounted() {
         window.addEventListener('resize', this.updateScreenWidth);
-        this.performMenu();
         window.addEventListener('scroll', this.navbarWhite);
+        this.performMenu();
+        this.getItemCount();
     },
 
     created() {
@@ -129,7 +134,21 @@ export default {
         },
         performMenu() {
             this.screenWidth > 768 ? this.menu = true : this.menu = false;
-        }
+        },
+        getItemCount() {
+            if(this.auth) {
+                let config = { headers : {'Authorization' : `Bearer ${this.auth}`} };
+
+                apiService.get('/api/user/cart/list', config)
+                .then(resp => {
+                    this.cartItemCount = resp.data.length
+                    console.log(resp)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }
+        },
     },
 
     watch: {

@@ -53,7 +53,11 @@
         </table>
 
         <!-- paginator  -->
-        <paginator-one v-if="pagination" :data="paginationData" @changepage="fetchGiveaway"></paginator-one>
+        <paginator-one 
+        v-if="pagination" 
+        :data="paginationData" 
+        button-style="pagination-btn-blue"
+        @changepage="fetchGiveaway"></paginator-one>
     </div>
 </template>
 

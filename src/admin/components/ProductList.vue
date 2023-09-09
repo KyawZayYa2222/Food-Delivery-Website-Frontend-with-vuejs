@@ -66,6 +66,7 @@
         <paginator-one 
         v-if="pagination" 
         :data="paginationData" 
+        button-style="pagination-btn-blue"
         @changepage="fetchProduct"/>
     </div>
 </template>

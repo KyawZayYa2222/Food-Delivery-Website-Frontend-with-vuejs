@@ -3,8 +3,8 @@
         <nav-bar></nav-bar>
 
         <div class="container mx-auto min-h-screen pt-20 lg:pt-40">
-            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-5 mx-auto">
-                <div class="xl:col-span-2">
+            <div class="grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-10 gap-5 mx-auto">
+                <div class="xl:col-span-4 lg:col-span-2">
                     <div class="bg-gray-100 w-full xl:w-96 ms-auto">
                         <div class="flex border-0 border-b-2 bg-gray-200 border-gray-300 p-2 pb-5">
                             <div class="relative">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <div class="xl:col-span-3 p-2">
+                <div class="xl:col-span-6 lg:col-span-4 p-2">
                     <component :is="currentComponent"></component>
                 </div>
             </div>
@@ -104,12 +104,6 @@ export default {
         name: function() {
             return this.userData ? this.userData.name : null
         },
-        email: function() {
-            return this.userData ? this.userData.email : null
-        },
-        phone: function() {
-            return this.userData ? this.userData.phone : null
-        },
         address: function() {
             return this.userData ? this.userData.address : null
         },
@@ -118,15 +112,15 @@ export default {
         },
     },
     mounted() {
-        this.fetchUserDetails()
+        this.fetchUserData()
     },
     methods: {
-        fetchUserDetails() {
+        fetchUserData() {
             let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
 
             axios.get('http://127.0.0.1:8000/api/user/details', config)
             .then(response => {
-                console.log(response)
+                // console.log(response)
                 this.userData = response.data;
             })
             .catch(error => {
@@ -140,7 +134,7 @@ export default {
         },
         closeUploadModal() {
             this.showUploadModal = false
-            this.fetchUserDetails()
+            this.fetchUserData()
         }
     }
 }

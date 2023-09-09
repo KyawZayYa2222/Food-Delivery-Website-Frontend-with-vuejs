@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-3">
+    <div class="mt-1">
         <h2 class="text-lg text-gray-600 mb-1">Category/ Create</h2>
         <form @submit.prevent="createCategory">
             <div class="text-green-600">

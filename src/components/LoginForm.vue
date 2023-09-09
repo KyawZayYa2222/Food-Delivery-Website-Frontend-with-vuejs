@@ -74,7 +74,9 @@ export default {
                     let userData = response.data.userData;
                     let token = response.data.token;
                     storeAuthInfo(userData, token);
-                    this.$router.push('/menu');
+                    this.$nextTick(() => {
+                        this.$router.push('/menu');
+                    })
                 })
                 .catch(error => {
                     error.response.status===401 ? vm.errors.message = error.response.data.message : null;

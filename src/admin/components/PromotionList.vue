@@ -32,7 +32,7 @@
                     <td>{{promotion.promotion_type}}</td>
                     <td v-if="promotion.cashback!=null">{{promotion.cashback}}</td>
                     <td v-else-if="promotion.discount!=null">{{promotion.discount}}</td>
-                    <td v-else>{{promotion.giveaway_id}}</td>
+                    <td v-else>{{promotion.giveaway.name}}</td>
                     <td>
                         <div v-if="promotion.active" class="w-4 h-4 mx-auto rounded-full bg-green-700 border-4 border-green-600"></div>
                         <div v-else class="w-4 h-4 mx-auto rounded-full bg-red-700 border-4 border-red-600"></div>
@@ -60,6 +60,7 @@
         <paginator-one 
         v-if="pagination" 
         :data="paginationData" 
+        button-style="pagination-btn-blue"
         @changepage="fetchPromotion"/>
     </div>
 </template>
@@ -94,9 +95,8 @@ export default {
     methods: {
         fetchPromotion(page=1) {
             let vm = this;
-            axios.get('http://127.0.0.1:8000/api/admin/promotion/list?' + page, this.config)
+            axios.get('http://127.0.0.1:8000/api/admin/promotion/list/all?' + page, this.config)
             .then(response => {
-                console.log(response)
                 vm.promotions = response.data.data;
                 vm.pagination = true;
                 vm.paginationData = response.data;

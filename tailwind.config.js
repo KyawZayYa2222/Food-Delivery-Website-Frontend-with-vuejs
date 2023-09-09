@@ -9,5 +9,7 @@ module.exports = {
         boxShadow: ['focus-within'],
       },
     },
-    plugins: [],
+    plugins: [
+      require('@tailwindcss/line-clamp'),
+    ],
   }

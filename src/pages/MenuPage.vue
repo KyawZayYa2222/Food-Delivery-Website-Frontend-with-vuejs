@@ -1,48 +1,48 @@
 <template>
     <div>
-        <nav-bar></nav-bar>
+        <nav-bar ref="nav"></nav-bar>
+
+        <product-detail-modal 
+        v-if="detailModal" 
+        :product="detailProduct"
+        @closeModal="detailModal=false"
+        @addCart="addToCart"/>
 
         <div class="w-full min-h-screen px-3 pt-16">
-            <div class="w-full sm:w-fit sm:ms-10 flex border-2 border-gray-300 rounded-md focus-within:shadow-md transition delay-75 duration-200">
-                <input 
-                type="text" 
-                v-model="searchKey"
-                class="w-full sm:w-96 h-10 rounded-s-md outline-none px-3"
-                placeholder="search . .">
-                <button class="text-orange-600 text-lg px-2 rounded-e-md">
-                    <i class="fa fa-solid fa-search"></i>
-                </button>
-            </div>
+            <search-menu @searchProduct="fetchProductBySearch"/>
             <h1 class="text-2xl text-center font-semibold my-2">Tasty Menu</h1>
-            <div class="relative container mx-auto">
-                <button class="absolute end-0 me-2"><i class="fa-solid fa-list fa-beat fa-lg"></i></button>
-                <ul class="absolute md:relative md:flex md:justify-center">
-                    <li class="px-3">Juice & Drink</li>
-                    <li class="px-3">Fried Food</li>
-                    <li class="px-3">Seafood</li>
-                    <li class="px-3">Breakfast</li>
-                    <li class="px-3">Pizza</li>
-                    <li class="px-3">Burger</li>
-                    <li class="px-3">Soup</li>
-                </ul>
-            </div>
-            <div class="container mx-auto xl:px-10 pt-3 pb-6">
+            <!-- <button class="absolute end-0 me-2"><i class="fa-solid fa-list fa-beat fa-lg"></i></button> -->
+            <category-con @fetchByCate="fetchProductByCate"/>
+            
+            <div class="container mx-auto xl:px-10 pt-4 pb-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
                     <div v-for="(product, index) in products" :key="index" class="mx-auto">
-                        <div class="w-full max-w-[300px] sm:w-56 xl:w-64 bg-white border-2 border-gray-300 shadow-md rounded-xl mt-[60px]">
-                            <img :src="product.img" alt="..." class="w-full mx-auto mt-[-70px]" title="image">
-                            <h2 class="text-xl font-bold text-center text-gray-900">{{product.name}}</h2>
-                            <p class="text-sm text-gray-500 px-2 my-2">Hey taste this is so good nice food hello taste this.</p>
-                            <div class="flex justify-between px-2 pb-2">
-                                <p class="text-lg font-bold text-gray-500">{{product.price}}$</p>
-                                <button class="bg-orange-600 text-white w-7 h-7 rounded-full hover:translate-y-[-2px] hover:shadow-md hover:shadow-orange-400 transition duration-150">
-                                    <i class="fa fa-solid fa-plus"></i>
-                                </button>
+                        <div class="cursor-pointer relative">
+                            <div @click="showDetail(product)" class="w-full max-w-[300px] sm:w-56 xl:w-64 mt-[50px] bg-white border-2
+                            border-gray-300 shadow-lg rounded-xl hover:shadow-gray-300 hover:shadow-xl transition-all duration-100">
+                                <img :src="product.image" alt="..." class="w-full mx-auto mt-[-70px]" title="image">
+                                <h2 class="text-xl font-bold text-center text-gray-900">{{product.name}}</h2>
+                                <p class="text-sm text-gray-500 px-2 mt-1 mb-2 line-clamp-2">{{product.short_desc}}</p>
+                                <p class="text-lg font-bold text-gray-500 mb-1 px-2">{{product.price}}</p>
                             </div>
+                            <button 
+                            @click="addToCart(product.id)"
+                            class="z-10 absolute bottom-2 right-2 bg-orange-600 text-white w-7 h-7 rounded-md 
+                            hover:translate-y-[-2px] hover:shadow-md hover:shadow-orange-400 transition duration-150">
+                                <i class="fa fa-solid fa-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- paginator  -->
+            <paginator-one 
+            class="mb-2"
+            v-if="pagination" 
+            :data="paginationData"
+            button-style="pagination-btn-orange"
+            @changepage="fetchProduct"/>
         </div>
 
         <footer-section></footer-section>
@@ -52,26 +52,83 @@
 <script>
 import NavBar from '../layout/NavBar.vue'
 import FooterSection from '../layout/FooterSection.vue'
+import CategoryCon from '@/components/CategoryCon.vue'
+import PaginatorOne from '@/admin/components/PaginatorOne.vue'
+import SearchMenu from '@/components/SearchMenu.vue'
+import ProductDetailModal from '@/components/ProductDetailModal.vue'
+import apiService from '@/apiService'
+
+
 export default {
     name: 'MenuPage',
     components: { 
         NavBar,
         FooterSection,
+        CategoryCon,
+        PaginatorOne,
+        SearchMenu,
+        ProductDetailModal
     },
     data() {
         return {
             searchKey: null,
-            products: [
-                {name: 'product-one', price: 20, img: require('@/assets/img/welcome-img.png')},
-                {name: 'product-two', price: 30, img: require('@/assets/img/burger-img-2.png')},
-                {name: 'product-three', price: 60, img: require('@/assets/img/shrink-plate.png')},
-                {name: 'product-four', price: 15, img: require('@/assets/img/burger-img-2.png')},
-                {name: 'product-one', price: 20, img: require('@/assets/img/welcome-img.png')},
-                {name: 'product-two', price: 30, img: require('@/assets/img/burger-img-2.png')},
-                {name: 'product-three', price: 60, img: require('@/assets/img/shrink-plate.png')},
-                {name: 'product-four', price: 15, img: require('@/assets/img/burger-img-2.png')},
-            ]
+            products: null,
+            paginationData: null,
+            pagination: false,
+            detailModal: false,
+            detailProduct: null,
+            token: localStorage.getItem('access-token'),
         }
+    },
+    computed: {
+        config: function() {
+            return { headers : {'Authorization' : `Bearer ${this.token}`} };
+        },
+    },
+    mounted() {
+        this.fetchProduct();
+    },
+    methods: {
+        fetchProduct() {
+            let vm = this;
+            apiService.get('/api/product/list')
+            .then(response => {
+                this.products = response.data.data;
+                vm.pagination = true;
+                vm.paginationData = response.data;
+            })
+        },
+        fetchProductByCate(response) {
+            this.products = response.data.data;
+            this.pagination = false;
+        },
+        fetchProductBySearch(response) {
+            this.products = response.data.data;
+            this.pagination = false;
+        },
+        showDetail(product) {
+            this.detailModal = true;
+            this.detailProduct = product;
+        },
+        addToCart(productId) {
+            apiService.post('/api/user/cart/create', {'product_id': productId}, this.config)
+            .then(response => {
+                this.$refs.nav.getItemCount();
+                this.$toasted.show(response.data.message, {
+                    className: ["alert-con", "!bg-green-500"]
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            })
+        },
     }
 }
 </script>
+
+<style>
+.custom-toast {
+    font-size: 30px !important;
+    padding: 10px !important;
+}
+</style>

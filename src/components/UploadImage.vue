@@ -82,12 +82,24 @@ export default {
             }
             image.src = imageSrc;
         },
+        
+        // change dataurl to blob 
+        dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        },
         uploadImage() {
-            console.log(this.croppedImageFile);
+            const blob = this.dataURItoBlob(this.croppedImageFile);
             let formData = new FormData()
-            formData.append('image', this.croppedImageFile)
+            formData.append('image', blob, '.png')
             
-            axios.post('http://127.0.0.1:8000/api/user/profile-picture/update', {image: this.croppedImageFile}, {
+            axios.post('http://127.0.0.1:8000/api/user/profile-picture/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${this.token}`

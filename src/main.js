@@ -31,8 +31,14 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import CartPage from './pages/CartPage'
 import ProfilePage from './pages/ProfilePage'
+import Toasted from 'vue-toasted'
 
 Vue.use(VueRouter);
+Vue.use(Toasted, {
+  position: 'top-right',
+  duration: 2500,
+  keepOnHover: true,
+})
 
 
 // routes 

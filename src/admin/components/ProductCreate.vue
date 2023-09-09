@@ -26,6 +26,7 @@ export default {
     },
     methods: {
         createProduct(formData) {
+            console.log(formData)
             let token = localStorage.getItem('access-token')
 
             axios.post('http://127.0.0.1:8000/api/admin/product/create', formData, {
@@ -34,7 +35,8 @@ export default {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            .then(() => {
+            .then((response) => {
+                console.log(response)
                 this.$router.push('list')
             })
             .catch(error => {
