@@ -5,6 +5,8 @@ import './assets/fontawesome/css/all.css'
 import VueRouter from 'vue-router'
 import { logout } from './logout.js'
 import { userAuth, adminAuth, preventRepeatAuth } from './authenticate'
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from './config'
 
 import TemplateIndex from './admin/TemplateIndex'
 import DashboardLayout from './admin/layout/DashboardLayout'
@@ -33,13 +35,16 @@ import CartPage from './pages/CartPage'
 import ProfilePage from './pages/ProfilePage'
 import Toasted from 'vue-toasted'
 
-Vue.use(VueRouter);
+// firebase 
+initializeApp(firebaseConfig);
+
 Vue.use(Toasted, {
   position: 'top-right',
   duration: 2500,
   keepOnHover: true,
 })
 
+Vue.use(VueRouter);
 
 // routes 
 const routes = [
