@@ -1,5 +1,6 @@
 <template>
     <div>
+        <page-loader v-if="isLoading"/>
         <nav-bar></nav-bar>
         <div class="min-h-screen flex items-center sm:bg-gradient-to-bl sm:from-white sm:to-orange-500 sm:from-75% sm:to-75%">
             <div class="grid grid-cols-1 md:grid-cols-2 mx-auto">
@@ -36,6 +37,7 @@
 import NavBar from '../layout/NavBar.vue'
 import FooterSection from '../layout/FooterSection.vue'
 import ContactForm from '@/components/ContactForm.vue'
+import PageLoader from '@/components/PageLoader.vue'
 
 export default {
     name: 'ContactPage',
@@ -43,6 +45,23 @@ export default {
         NavBar,
         FooterSection,
         ContactForm,
+        PageLoader,
     },
+    data() {
+        return {
+            isLoading: false,
+        }
+    },
+    mounted() {
+        this.toggleLoader()
+    },
+    methods: {
+        toggleLoader() {
+          this.isLoading = true;
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000);
+        },
+    }
 }
 </script>

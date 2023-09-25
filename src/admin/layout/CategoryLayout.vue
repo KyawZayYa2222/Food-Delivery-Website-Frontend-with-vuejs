@@ -30,7 +30,7 @@
                     <td>{{index+1}}</td>
                     <td>{{category.name}}</td>
                     <td><img :src="category.image" alt="img" class="w-28 mx-auto"></td>
-                    <td>2</td>
+                    <td>{{category.product_count}}</td>
                     <td>
                         <button 
                         @click="showUpdFormModal(category)"
@@ -63,8 +63,8 @@
 <script>
 import CategoryCreateForm from '../components/CategoryCreateForm.vue'
 import CategoryUpdateForm from '../components/CategoryUpdateForm.vue'
-import axios from 'axios'
 import PaginatorOne from '../components/PaginatorOne.vue'
+import {apiService, apiServiceWithAuth} from '@/apiService'
 
 
 export default {
@@ -83,15 +83,14 @@ export default {
             updateCategoryItem: null,
         }
     },
-    mounted() {
+    created() {
         this.fetchCategory();
     },
     methods: {
         // fetching ---
         fetchCategory(page=1) {
             const vm = this;
-
-            axios.get('http://127.0.0.1:8000/api/category/paginatedlist?page='+page)
+            apiService.get('/api/category/paginatedlist?page='+page)
             .then(response => {
                 vm.categories = response.data.data;
                 vm.pagination = true;
@@ -101,13 +100,10 @@ export default {
                 console.log(error)
             })
         },
-
         // deleting ---
         deleteCategory(id) {
             let vm = this;
-            const token = localStorage.getItem('access-token');
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
-            axios.delete('http://127.0.0.1:8000/api/admin/category/'+id+'/delete', config) 
+            apiServiceWithAuth.delete('/api/admin/category/'+id+'/delete') 
             .then(() => {
                 this.fetchCategory(vm.paginationData.current_page);
             })
@@ -115,7 +111,6 @@ export default {
                 console.log(error)
             })
         },
-
         // updating ---
         showUpdFormModal(category) {
             this.updateCategoryItem = category;

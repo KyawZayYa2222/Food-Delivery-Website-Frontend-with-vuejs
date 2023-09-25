@@ -5,14 +5,14 @@
         <!-- form  -->
         <promotion-c-u-form 
         method="update"
-        :errors="this.errors"
+        :errors="errors"
         @submitForm="createPromotion"/>
     </div>
 </template>
 
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 import PromotionCUForm from './PromotionCUForm.vue'
 
 export default {
@@ -27,10 +27,8 @@ export default {
     },
     methods: {
         createPromotion(createdData) {
-            let token = localStorage.getItem('access-token');
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
 
-            axios.post('http://127.0.0.1:8000/api/admin/promotion/create', createdData, config)
+            apiServiceWithAuth.post('/api/admin/promotion/create', createdData)
             .then(() => {
                 this.$router.push('list')
             })

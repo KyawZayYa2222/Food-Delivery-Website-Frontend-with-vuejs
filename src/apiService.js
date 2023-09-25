@@ -5,4 +5,18 @@ const apiService = axios.create({
     baseURL: BASE_URL,
 });
 
-export default apiService;
+const apiServiceWithAuth = axios.create({
+    baseURL: BASE_URL,
+});
+
+apiServiceWithAuth.interceptors.request.use(config => {
+    const token = localStorage.getItem('access-token');
+    if(token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}), error => {
+    return Promise.reject(error);
+}
+
+export {apiService, apiServiceWithAuth};

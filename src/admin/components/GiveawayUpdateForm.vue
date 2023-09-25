@@ -38,7 +38,7 @@
 
 
 <script>
-import axios from 'axios';
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'GiveawayUpdateForm',
@@ -86,16 +86,13 @@ export default {
         },
 
         update() {
-            const token = localStorage.getItem('access-token');
             let formData = new FormData();
             formData.append('name', this.giveawayName);
             formData.append('image', this.imageFile);
-            // console.log(formData);
             
-            axios.post('http://127.0.0.1:8000/api/admin/giveaway/'+this.updItemId+'/update', formData, {
+            apiServiceWithAuth.post('/api/admin/giveaway/'+this.updItemId+'/update', formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization' : `Bearer ${token}`,
                 }
             })
             .then((response) => {

@@ -34,8 +34,8 @@
                     <td v-else-if="promotion.discount!=null">{{promotion.discount}}</td>
                     <td v-else>{{promotion.giveaway.name}}</td>
                     <td>
-                        <div v-if="promotion.active" class="w-4 h-4 mx-auto rounded-full bg-green-700 border-4 border-green-600"></div>
-                        <div v-else class="w-4 h-4 mx-auto rounded-full bg-red-700 border-4 border-red-600"></div>
+                        <div v-if="promotion.active" class="status-active"></div>
+                        <div v-else class="status-unactive"></div>
                     </td>
                     <td>{{promotion.start_date}}</td>
                     <td>{{promotion.end_date}}</td>
@@ -67,7 +67,7 @@
 
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 import PaginatorOne from '../components/PaginatorOne.vue'
 
 export default {
@@ -78,24 +78,18 @@ export default {
     data() {
         return {
             promotions: null,
-            token: localStorage.getItem('access-token'),
             message: null,
             paginationData: null,
             pagination: false,
         }
     },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        }
-    },
-    mounted() {
+    created() {
         this.fetchPromotion()
     },
     methods: {
         fetchPromotion(page=1) {
             let vm = this;
-            axios.get('http://127.0.0.1:8000/api/admin/promotion/list/all?' + page, this.config)
+            apiServiceWithAuth.get('/api/admin/promotion/list/all?' + page)
             .then(response => {
                 vm.promotions = response.data.data;
                 vm.pagination = true;
@@ -110,7 +104,7 @@ export default {
         },
         
         deletePromotion(id) {
-            axios.delete('http://127.0.0.1:8000/api/admin/promotion/'+id+'/delete', this.config)
+            apiServiceWithAuth.delete('/api/admin/promotion/'+id+'/delete')
             .then(() => {
                 this.fetchPromotion()
             })

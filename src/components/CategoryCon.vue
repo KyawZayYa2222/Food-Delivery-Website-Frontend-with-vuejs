@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiService} from '@/apiService'
 
 export default {
     name: 'CategoryCon',
@@ -29,12 +29,12 @@ export default {
             categories: null,
         }
     },
-    mounted() {
+    created() {
         this.fetchCategory();
     },
     methods: {
         fetchCategory() {
-            axios.get('http://127.0.0.1:8000/api/category/list')
+            apiService.get('/api/category/list')
             .then(response => {
                 this.categories = response.data;
             })
@@ -44,7 +44,7 @@ export default {
         },
         fetchProduct(categoryId) {
             let vm = this;
-            axios.get('http://127.0.0.1:8000/api/product/list?category_id='+categoryId)
+            apiService.get('/api/product/list?category_id='+categoryId)
             .then(response => {
                 vm.$emit('fetchByCate', response);
             })

@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'ChangePassword',
@@ -67,14 +67,10 @@ export default {
             newConfirmPass: null,
             inputType: 'password',
             showPass: null,
-            token: localStorage.getItem('access-token'),
             errors: null,
         }
     },
     computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        },
         formData: function() {
             return {
                 current_password: this.currentPass,
@@ -88,7 +84,7 @@ export default {
     },
     methods: {
         passwordUpdate() {
-            axios.post('http://127.0.0.1:8000/api/user/password/update', this.formData, this.config)
+            apiServiceWithAuth.post('/api/user/password/update', this.formData)
             .then(response => {
                 console.log(response)
             })

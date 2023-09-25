@@ -10,7 +10,7 @@
                 <div class="flex flex-col">
                     <h3 class="text-lg text-gray-700">Choose A Category</h3>
                     <small 
-                    class="text-red-600 font-semibold" 
+                    class="error-text" 
                     v-if="errors && errors.category_id">{{errors.category_id[0]}}</small>
 
                     <div class="md:w-96 w-full px-2 py-1 mb-3 border border-gray-700 rounded-md shadow-md">
@@ -33,7 +33,7 @@
                 <div class="flex flex-col md:ms-5">
                     <label for="pro-name" class="text-gray-700 pt-1">Product Name</label>
                     <small 
-                    class="text-red-600 font-semibold" 
+                    class="error-text" 
                     v-if="errors && errors.name">{{errors.name[0]}}</small>
                     <input 
                     type="text"
@@ -45,7 +45,7 @@
                 <!-- Price  -->
                     <label for="price" class="text-gray-700">Price</label>
                     <small 
-                    class="text-red-600 font-semibold" 
+                    class="error-text" 
                     v-if="errors && errors.price">{{errors.price[0]}}</small>
                     <input 
                     type="number" 
@@ -59,7 +59,7 @@
         <!-- short description  -->
             <label for="short-desc" class="text-gray-700">Short Description</label>
             <small 
-            class="text-red-600 font-semibold" 
+            class="error-text" 
             v-if="errors && errors.short_desc">{{errors.short_desc[0]}}</small>
             <input 
             type="text"
@@ -71,7 +71,7 @@
         <!-- long description  -->
             <label for="long-desc" class="text-gray-700">Long Description</label>
             <small 
-            class="text-red-600 font-semibold" 
+            class="error-text" 
             v-if="errors && errors.long_desc">{{errors.long_desc[0]}}</small>
             <textarea 
             rows="6"
@@ -114,7 +114,7 @@
                 <div>
                     <label for="pro-img" class="text-gray-700 mb-1">Insert product image</label><br>
                     <small 
-                    class="text-red-600 font-semibold" 
+                    class="error-text" 
                     v-if="errors && errors.image">{{errors.image[0]}}</small>
                     <input type="file" @change="handleFileInput">
                 </div>
@@ -130,7 +130,7 @@
 
 
 <script>
-import axios from 'axios';
+import {apiService, apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'ProductCUForm',
@@ -153,16 +153,13 @@ export default {
             selectedPromotion: null,
         }
     },
-    computed: {
-
-    },
-    mounted() {
+    created() {
         this.fetchCategory()
         this.fetchPromotion()
     },
     methods: {
         fetchCategory() {
-            axios.get('http://127.0.0.1:8000/api/category/list')
+            apiService.get('/api/category/list')
             .then(response => {
                 this.categories = response.data
             })
@@ -171,9 +168,7 @@ export default {
             })
         },
         fetchPromotion() {
-            let token = localStorage.getItem('access-token');
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
-            axios.get('http://127.0.0.1:8000/api/admin/promotion/list/active', config)
+            apiServiceWithAuth.get('/api/admin/promotion/list/active')
             .then(response => {
                 this.promotions = response.data
             })

@@ -1,5 +1,7 @@
 <template>
     <div>
+        <page-loader v-if="isLoading"/>
+
         <nav-bar></nav-bar>
 
         <div class="w-full pt-20 min-h-screen">
@@ -7,6 +9,11 @@
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4 px-3">
                 <!-- collection  -->
                 <div class="md:col-span-3">
+                    <div v-if="cartItems && cartItems.length==0"
+                    class="w-full flex justify-center items-center lg:w-[600px] h-32 border-2 border-gray-300 ms-auto rounded-md">
+                        <h2 class="text-3xl italic text-gray-500">No item have in your cart.</h2>
+                    </div>
+
                     <div 
                     v-for="(item, index) in cartItems" :key="index"
                     class="flex w-full mb-2 lg:w-[600px] border border-gray-400 ms-auto rounded-md overflow-hidden">
@@ -53,10 +60,9 @@
 <script>
 import NavBar from '@/layout/NavBar.vue'
 import FooterSection from '@/layout/FooterSection.vue'
-// import { cartList } from '@/cartList.js'
-import apiService from '@/apiService'
+import {apiServiceWithAuth} from '@/apiService'
 import PaymentCheckout from '@/components/PaymentCheckout.vue'
-
+import PageLoader from '@/components/PageLoader.vue'
 
 export default {
     name: 'CartPage',
@@ -64,6 +70,7 @@ export default {
         NavBar,
         FooterSection,
         PaymentCheckout,
+        PageLoader
     },
     data() {
         return {
@@ -71,19 +78,24 @@ export default {
             token: localStorage.getItem('access-token'),
             payment: false,
             totalItem: null,
+            isLoading: false,
         }
     },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        },
-    },
-    mounted() {
+    created() {
         this.fetchCartItem();
     },
+    mounted() {
+        this.toggleLoader()
+    },
     methods: {
+        toggleLoader() {
+          this.isLoading = true;
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000);
+        },
         fetchCartItem() {
-            apiService.get('/api/user/cart/list', this.config)
+            apiServiceWithAuth.get('/api/user/cart/list')
             .then(resp => {
                 this.totalItem = resp.data.length
                 this.cartItems = resp.data
@@ -94,21 +106,21 @@ export default {
             })
         },
         increaseCount(id) {
-            apiService.post('api/user/cart/'+id+'/increasecount', null,this.config)
+            apiServiceWithAuth.post('api/user/cart/'+id+'/increasecount')
             .then(() => {
                 this.fetchCartItem();
                 this.$refs.payment.getTotalCost();
             })
         },
         decreaseCount(id) {
-            apiService.post('api/user/cart/'+id+'/decreasecount', null, this.config)
+            apiServiceWithAuth.post('api/user/cart/'+id+'/decreasecount')
             .then(() => {
                 this.fetchCartItem();
                 this.$refs.payment.getTotalCost();
             })
         },
         removeItem(id) {
-            apiService.delete('/api/user/cart/'+id+'/remove', this.config)
+            apiServiceWithAuth.delete('/api/user/cart/'+id+'/remove')
             .then(response => {
                 this.fetchCartItem();
                 this.$refs.payment.getTotalCost();
@@ -118,11 +130,11 @@ export default {
             })
         }
     },
-    watch: {
-        payment(value) {
-            console.log(value)
-        }
-    }
+    // watch: {
+    //     payment(value) {
+    //         console.log(value)
+    //     }
+    // }
 }
 </script>
 

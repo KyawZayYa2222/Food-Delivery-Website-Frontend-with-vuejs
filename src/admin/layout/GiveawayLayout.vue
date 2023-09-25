@@ -62,10 +62,10 @@
 </template>
 
 <script>
-import axios from 'axios'
 import GiveawayCreateForm from '../components/GiveawayCreateForm.vue'
 import PaginatorOne from '../components/PaginatorOne.vue'
 import GiveawayUpdateForm from '../components/GiveawayUpdateForm.vue'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'GiveawayLayout',
@@ -81,18 +81,16 @@ export default {
             pagination: false,
             giveawayUpdForm: false,
             updateGiveawayItem: null,
-            token: localStorage.getItem('access-token'),
         }
     },
-    mounted() {
+    created() {
         this.fetchGiveaway();
     },
     methods: {
         // fetching ---
         fetchGiveaway(page=1) {
             const vm = this;
-            let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
-            axios.get('http://127.0.0.1:8000/api/admin/giveaway/paginatedlist?page='+page, config)
+            apiServiceWithAuth.get('/api/admin/giveaway/paginatedlist?page='+page)
             .then(response => {
                 vm.giveaways = response.data.data;
                 vm.pagination = true;
@@ -102,12 +100,10 @@ export default {
                 console.log(error)
             })
         },
-
         // deleting ---
         deleteGiveaway(id) {
             let vm = this;
-            let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
-            axios.delete('http://127.0.0.1:8000/api/admin/giveaway/'+id+'/delete', config) 
+            apiServiceWithAuth.delete('/api/admin/giveaway/'+id+'/delete') 
             .then(() => {
                 this.fetchGiveaway(vm.paginationData.current_page);
             })
@@ -115,7 +111,6 @@ export default {
                 console.log(error)
             })
         },
-
         // updating ---
         showUpdFormModal(giveaway) {
             this.updateGiveawayItem = giveaway;

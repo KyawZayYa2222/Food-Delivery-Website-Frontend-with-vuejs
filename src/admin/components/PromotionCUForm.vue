@@ -102,7 +102,7 @@
 
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 import DatePicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'; 
 
@@ -116,13 +116,12 @@ export default {
     components: {
         DatePicker,
     },
-    mounted() {
+    created() {
         this.fetchGiveaway()
     },
     data() {
         return {
             giveaways: null,
-            token: localStorage.getItem('access-token'),
             promotionType: 'giveaway',
             giveawayId: null,
             discount: null,
@@ -146,8 +145,7 @@ export default {
     methods: {
         fetchGiveaway() {
             const vm = this;
-            let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
-            axios.get('http://127.0.0.1:8000/api/admin/giveaway/list', config)
+            apiServiceWithAuth.get('/api/admin/giveaway/list')
             .then(response => {
                 vm.giveaways = response.data;
             })

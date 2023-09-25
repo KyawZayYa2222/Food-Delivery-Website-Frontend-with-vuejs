@@ -1,5 +1,7 @@
 <template>
     <div>
+        <page-loader v-if="isLoading"/>
+
         <nav-bar></nav-bar>
 
         <div class="container mx-auto min-h-screen pt-20 lg:pt-40">
@@ -15,12 +17,6 @@
                                     <i class="fa-solid fa-camera align-middle"></i>
                                 </label>
                                 <input type="file" @change="handleFile" id="fileinput" class="hidden">
-
-                                <!-- <button 
-                                class="absolute bottom-1 right-3 w-8 h-8 text-white bg-gray-600 rounded-full border border-gray-700"
-                                @click="showUploadModal=true">
-                                    <i class="fa-solid fa-camera"></i>
-                                </button> -->
                             </div>
                             <div class="ps-2 pt-4">
                                 <h1 class="text-2xl font-semibold text-gray-700">{{name ? name : "Your Name"}}</h1>
@@ -65,7 +61,8 @@ import ProfileDetail from '@/components/ProfileDetail.vue'
 import OrderHistory from '@/components/OrderHistory.vue'
 import ChangePassword from '@/components/ChangePassword.vue'
 import UploadImage from '@/components/UploadImage.vue'
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
+import PageLoader from '@/components/PageLoader.vue'
 
 export default {
     name: 'ProfilePage',
@@ -76,14 +73,15 @@ export default {
         OrderHistory,
         ChangePassword,
         UploadImage,
+        PageLoader,
     },
     data() {
         return {
             currentComponent: 'ProfileDetail',
             showUploadModal: false,
             userData: null,
-            token: localStorage.getItem('access-token'),
             uploadImg: null,
+            isLoading: false,
             componentLinks: [
                 {
                     name: 'Profile Details',
@@ -111,16 +109,20 @@ export default {
             return this.userData ? this.userData.image : null
         },
     },
-    mounted() {
+    created() {
         this.fetchUserData()
+        this.toggleLoader();
     },
     methods: {
+        toggleLoader() {
+          this.isLoading = true;
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000);
+        },
         fetchUserData() {
-            let config = { headers : {'Authorization' : `Bearer ${this.token}`} };
-
-            axios.get('http://127.0.0.1:8000/api/user/details', config)
+            apiServiceWithAuth.get('/api/user/details')
             .then(response => {
-                // console.log(response)
                 this.userData = response.data;
             })
             .catch(error => {
@@ -128,7 +130,6 @@ export default {
             })
         },
         handleFile(e) {
-            // console.log(this.showUploadModal)
             this.uploadImg = e.target.files[0]
             this.showUploadModal = true
         },

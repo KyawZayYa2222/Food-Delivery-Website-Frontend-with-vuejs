@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 import ProductCUForm from './ProductCUForm.vue'
 
 export default {
@@ -26,13 +26,9 @@ export default {
     },
     methods: {
         createProduct(formData) {
-            console.log(formData)
-            let token = localStorage.getItem('access-token')
-
-            axios.post('http://127.0.0.1:8000/api/admin/product/create', formData, {
+            apiServiceWithAuth.post('/api/admin/product/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
                 }
             })
             .then((response) => {

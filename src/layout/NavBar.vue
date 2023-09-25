@@ -38,8 +38,9 @@
                 
                 <router-link to="/cart" class="mx-5 text-xl">
                     <div class="relative">
-                        <span class="absolute top-[-4px] right-[-5px] z-10 text-xs text-white px-1 py-0 bg-orange-600 rounded-lg">{{cartItemCount}}</span>
-                        <i class="fa fa-solid fa-bag-shopping"></i>
+                        <span class="absolute top-[-4px] right-[-5px] z-10 text-sm text-white px-1 py-0 bg-orange-600 rounded-md">{{cartItemCount}}</span>
+                        <!-- <i class="fa fa-solid fa-bag-shopping"></i> -->
+                        <img src="@/assets/img/cart-38.png" class="w-7">
                     </div>
                 </router-link>
                 
@@ -53,8 +54,7 @@
 
 
 <script>
-// import { cartList } from '@/cartList.js'
-import apiService from '@/apiService'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'NavBar',
@@ -74,34 +74,15 @@ export default {
                 name: 'Register'
             },
             links: [
-                {
-                    path: '/',
-                    name: 'Home'
-                },
-                {
-                    path: '/menu',
-                    name: 'Menu'
-                },
-                {
-                    path: '/service',
-                    name: 'Service'
-                },
-                {
-                    path: '/contact',
-                    name: 'Contact Us'
-                },
+                {path: '/', name: 'Home'},
+                {path: '/menu', name: 'Menu'},
+                {path: '/service', name: 'Service'},
+                {path: '/contact', name: 'Contact Us'},
             ]
         }
     },
-
-    mounted() {
-        window.addEventListener('resize', this.updateScreenWidth);
-        window.addEventListener('scroll', this.navbarWhite);
-        this.performMenu();
-        this.getItemCount();
-    },
-
     created() {
+        this.getItemCount();
         // showing links according to auth 
         if(this.auth) {
             this.LoginOrProfileLink.path = '/profile'
@@ -110,11 +91,14 @@ export default {
             this.RegOrLogoutLink.name = 'Logout'
         }
     },
-
+    mounted() {
+        window.addEventListener('resize', this.updateScreenWidth);
+        window.addEventListener('scroll', this.navbarWhite);
+        this.performMenu();
+    },
     beforeDestory() {
         window.removeEventListener('resize', this.updateScreenWidth);
     },
-
     methods: {
         navbarWhite() {
             if(scrollY >= 3) {
@@ -137,16 +121,11 @@ export default {
         },
         getItemCount() {
             if(this.auth) {
-                let config = { headers : {'Authorization' : `Bearer ${this.auth}`} };
-
-                apiService.get('/api/user/cart/list', config)
+                apiServiceWithAuth.get('/api/user/cart/list')
                 .then(resp => {
                     this.cartItemCount = resp.data.length
-                    console.log(resp)
                 })
-                .catch(err => {
-                    console.log(err)
-                })
+                .catch(err => console.log(err))
             }
         },
     },

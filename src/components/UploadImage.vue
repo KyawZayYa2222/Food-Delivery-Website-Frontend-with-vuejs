@@ -13,8 +13,6 @@
                         <!-- crop image  -->
                     </div>
                 </div>
-                <!-- Image file input  -->
-                <!-- <input ref="fileInput" type="file" @change="handleFile" class="mt-2"> -->
 
                 <div class="flex justify-between mt-2">
                     <button
@@ -35,8 +33,7 @@
 <script>
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
-import axios from 'axios'
-
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'UploadImage',
@@ -50,7 +47,6 @@ export default {
     data() {
         return {
             croppedImageFile: null,
-            token: localStorage.getItem('access-token')
         }
     },
     methods: {
@@ -99,10 +95,9 @@ export default {
             let formData = new FormData()
             formData.append('image', blob, '.png')
             
-            axios.post('http://127.0.0.1:8000/api/user/profile-picture/update', formData, {
+            apiServiceWithAuth.post('/api/user/profile-picture/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${this.token}`
                 }
             })
             .then(response => {

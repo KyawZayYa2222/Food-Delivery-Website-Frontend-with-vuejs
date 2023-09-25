@@ -11,22 +11,20 @@
 
             <p class="text-xl text-gray-500 text-center mb-3">or</p>
             
-            <button class="w-full mb-5 border-2 border-gray-400 py-1 text-gray-700 font-semibold flex items-center 
-            justify-center hover:border-black transition delay-75 duration-150">
-                <img src="@/assets/img/google-icon.png" alt="google-icon" class="w-12">
-                Continue with google
-            </button>
+            <google-login/>
         </div>
     </div>
 </template>
 
 <script>
 import RegisterForm from '@/components/RegisterForm.vue'
+import googleLogin from '@/components/googleLogin.vue'
 
 export default {
     name: 'RegisterPage',
     components: {
         RegisterForm,
+        googleLogin
     },
 }
 </script>

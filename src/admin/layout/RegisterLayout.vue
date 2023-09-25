@@ -27,7 +27,8 @@
                         <td>{{user.address}}</td>
                         <td>
                             <button type="button"
-                            class="red-btn mb-1">Delete</button>
+                            class="red-btn mb-1"
+                            @click="deleteUser(user.id)">Delete</button>
                         </td>
                     </tr>
                 </tbody>
@@ -37,27 +38,21 @@
 </template>
 
 <script>
-import apiService from '@/apiService'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'RegisterLayout',
     data() {
         return {
             registers: null,
-            token: localStorage.getItem('access-token'),
         }
     },
-    mounted() {
-        this.fetchOrder()
-    },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} }
-        }
+    created() {
+        this.fetchRegisteredUser()
     },
     methods: {
-        fetchOrder() {
-            apiService.get('/api/admin/user/list', this.config)
+        fetchRegisteredUser() {
+            apiServiceWithAuth.get('/api/admin/user/list')
             .then(response => {
                 console.log(response)
                 this.registers = response.data.data;
@@ -65,7 +60,17 @@ export default {
             .catch(error => {
                 console.log(error);
             })
-        }
+        },
+        deleteUser(id) {
+            apiServiceWithAuth.delete('/api/admin/user/'+id+'/delete')
+            .then(resp => {
+                this.fetchRegisteredUser()
+                this.$toasted.show(resp.data.message, {
+                    className: ["alert-con", "!bg-red-500"]
+                });
+            })
+            .catch(err => console.log(err))
+        } 
     }
 }
 </script>

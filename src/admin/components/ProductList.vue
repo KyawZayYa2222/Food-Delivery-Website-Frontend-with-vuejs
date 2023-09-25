@@ -19,7 +19,7 @@
                     <th>Price</th>
                     <th>Short Description</th>
                     <th>Long Description</th>
-                    <th>Promotion</th>
+                    <!-- <th>Promotion</th> -->
                     <th colspan="2">Actions</th>
                 </tr>
             </thead>
@@ -46,12 +46,19 @@
                             <p class="inline-block w-72 truncate">{{product.long_desc}}</p>
                         </div>
                     </td>
-                    <td>1% discount</td>
+                    <!-- <td>
+                        <p v-if="product.promotion">
+                            <p v-if="product.promotion.promotion_type==='discount'">{{product.promotion.discount}}</p>
+                            <p v-else-if="product.promotion.promotion_type==='cashback'">{{product.promotion.cashback}}</p>
+                            <p v-else>{{product.promotion.giveaway}}</p>
+                        </p>
+                        <p v-else class="text-gray-500 font-semibold">Null</p>
+                    </td> -->
                     <td>
                         <router-link 
                         :to="product.id+'/update'" 
                         type="button"
-                        class="blue-btn">update</router-link>
+                        class="blue-btn">Edit</router-link>
                     </td>
                     <td>
                         <button
@@ -72,8 +79,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 import PaginatorOne from '../components/PaginatorOne.vue'
+import {apiService, apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'ProductList',
@@ -87,37 +94,31 @@ export default {
             pagination: false,
         }
     },
-    mounted() {
+    created() {
         this.fetchProduct()
     },
     methods: {
         fetchProduct(page=1) {
             let vm = this;
-            axios.get('http://127.0.0.1:8000/api/product/list?' + page)
-            .then(response => {
-                vm.products = response.data.data;
+            apiService.get('/api/product/list?' + page)
+            .then(resp => {
+                console.log(resp)
+                vm.products = resp.data.data;
                 vm.pagination = true;
-                vm.paginationData = response.data;
+                vm.paginationData = resp.data;
             })
-            .catch(error => {
-                console.log(error)
-            })
+            .catch(err => console.log(err))
             .finally(() => {
                 console.log('finished')
             })
         },
         deleteProduct(id) {
-            let token = localStorage.getItem('access-token');
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
-
-            axios.delete('http://127.0.0.1:8000/api/admin/product/'+id+'/delete', config)
-            .then(response => {
-                console.log(response)
+            apiServiceWithAuth.delete('/api/admin/product/'+id+'/delete')
+            .then(resp => {
+                console.log(resp)
                 this.fetchProduct()
             })
-            .catch(error => {
-                console.log(error)
-            })
+            .catch(err => console.log(err))
         }
     }
 }

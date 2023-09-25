@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiService} from '@/apiService'
 
 export default {
     name: 'ContactForm',
@@ -69,9 +69,7 @@ export default {
     },
     methods: {
         createContact() {
-            console.log('contact')
-
-            axios.post('http://127.0.0.1:8000/api/contact/create', this.formData)
+            apiService.post('/api/contact/create', this.formData)
             .then(response => {
                 this.successMesg = true
                 console.log(response)

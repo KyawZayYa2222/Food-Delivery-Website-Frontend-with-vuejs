@@ -47,27 +47,21 @@
 </template>
 
 <script>
-import apiService from '@/apiService'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'OrderHistory',
     data() {
         return {
             orders: null,
-            token: localStorage.getItem('access-token'),
         }
     },
-    mounted() {
+    created() {
         this.fetchOrder()
-    },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} }
-        }
     },
     methods: {
         fetchOrder() {
-            apiService.get('/api/user/order/list', this.config)
+            apiServiceWithAuth.get('/api/user/order/list')
             .then(response => {
                 console.log(response)
                 this.orders = response.data;

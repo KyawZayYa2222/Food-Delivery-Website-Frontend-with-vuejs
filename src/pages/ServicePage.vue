@@ -1,5 +1,6 @@
 <template>
     <div>
+        <page-loader v-if="isLoading"/>
         <nav-bar></nav-bar>
         <div class="pt-20">
             <div 
@@ -8,7 +9,7 @@
                 <h1 class="text-5xl md:text-7xl font-semibold">What we offer ?</h1>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-4 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-12 mb-16">
                 <!-- service card  -->
                 <div v-for="(service, index) in services" :key="index">
                     <div class="border border-gray-300 shadow-lg w-80 xl:w-96 mx-auto mt-[60px] rounded-xl">
@@ -34,11 +35,14 @@
 <script>
 import NavBar from '../layout/NavBar.vue'
 import FooterSection from '../layout/FooterSection.vue'
+import PageLoader from '@/components/PageLoader.vue'
+
 export default {
     name: 'ServicePage',
     components: { 
         NavBar,
         FooterSection,
+        PageLoader,
     },
     data() {
         return {
@@ -58,8 +62,20 @@ export default {
                     icon: `<i class="fa-solid fa-hand-holding-hand"></i>`,
                     description: "About Delicious Menu blur blur blur"
                 },
-            ]
+            ],
+            isLoading: false,
         }
+    },
+    mounted() {
+        this.toggleLoader()
+    },
+    methods: {
+        toggleLoader() {
+          this.isLoading = true;
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000);
+        },
     }
 }
 </script>

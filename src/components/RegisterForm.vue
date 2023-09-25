@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiService} from '@/apiService'
 import {emailValidate, storeAuthInfo} from '@/formHandler.js'
 
 export default {
@@ -77,7 +77,7 @@ export default {
             !this.errors.password && !this.errors.confirmPassword) {
                 this.loader = true;
 
-                axios.post('http://127.0.0.1:8000/api/register', {
+                apiService.post('/api/register', {
                     name: this.name,
                     email: this.email,
                     password: this.password,

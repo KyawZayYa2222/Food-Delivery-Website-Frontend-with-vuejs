@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 import PromotionCUForm from './PromotionCUForm.vue'
 
 export default {
@@ -30,10 +30,7 @@ export default {
     // },
     methods: {
         updatePromotion(updatedData) {
-            let token = localStorage.getItem('access-token')
-            let config = { headers : {'Authorization' : `Bearer ${token}`} };
-
-            axios.put('http://127.0.0.1:8000/api/admin/promotion/'+this.$route.params.id+'/update', updatedData, config)
+            apiServiceWithAuth.put('/api/admin/promotion/'+this.$route.params.id+'/update', updatedData)
             .then(() => {
                 this.$router.push('/admin/promotion/list')
             })

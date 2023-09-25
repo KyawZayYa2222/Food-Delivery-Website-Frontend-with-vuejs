@@ -14,11 +14,21 @@
                     <button @click="sidebarActive=false" class="block sm:hidden"><i class="fa-solid fa-xmark fa-xl"></i></button>
                 </div>
                 <ul class="mt-10 leading-10">
-                    <li 
+                    <li class="sidebar"
                     v-for="(link, index) in links"
-                    :key="index" 
-                    class="sidebar-link relative border-0 border-b-2 border-b-gray-200 text-center">
-                        <router-link :to="link.path">{{link.name}}</router-link>
+                    :key="index">
+                        <router-link :to="link.path">
+                            <div 
+                            :class="{
+                                'bg-orange-600 text-white':$route.path==link.path,
+                                'mb-6':index==0
+                            }"
+                            class="group relative bg-gray-200 mb-2 text-gray-900 text-center rounded-md 
+                            border border-gray-300 hover:bg-orange-500 hover:text-white transition-all duration-150 delay-75">
+                                <span v-html="link.icon" class="absolute left-3"></span>
+                                {{link.name}}
+                            </div>
+                        </router-link>
                     </li>
                 </ul>
             </aside>
@@ -62,33 +72,36 @@
                         <!-- Profile  -->
                         <div class="relative">
                             <button @click="showProfPopover" title="profile">
-                                <div class="flex justify-center items-center w-8 h-8 bg-gray-200 border border-gray-300 rounded-full mx-3">
-                                    <i class="fa-regular fa-user fa-lg"></i>
+                                <div class="flex justify-center items-center w-8 h-8 bg-gray-200 border border-gray-300 rounded-full mx-3 overflow-hidden">
+                                    <img :src="user.image" class="w-full">
                                 </div>
                             </button>
                             
                             <div 
                             v-show="profileCon"
-                            class="absolute right-4 w-64 h-auto px-1 flex flex-col bg-gray-100 border border-gray-200 shadow-lg rounded-lg">
-                                <h2 class="text-md font-semibold text-center py-2">Admin</h2>
-                                <div class="w-full hover:bg-gray-200 border border-gray-200 rounded-lg my-1 px-2 py-1 text-center">
-                                    <span>
-                                        <i class="fa-solid fa-gear"></i> setting
-                                    </span>
+                            class="absolute right-4 w-80 h-auto px-1 flex flex-col bg-gray-100 border border-gray-200 shadow-lg rounded-lg">
+                                <div class="flex w-full mx-2 my-2 border-0 border-b py-2">
+                                    <figure class="w-16 h-16 overflow-hidden me-2">
+                                        <img :src="user.image" class="w-full">
+                                    </figure>
+                                    <div>
+                                        <h1 class="text-2xl font-semibold">{{user.name}}</h1>
+                                        <h2>{{user.email}}</h2>
+                                    </div>
                                 </div>
-                                <div class="w-full hover:bg-gray-200 border border-gray-200 rounded-lg my-1 px-2 py-1 text-center">
+
+                                <router-link to="/logout"
+                                class="w-full hover:bg-gray-200 border border-gray-200 rounded-lg my-1 px-2 py-1 text-center">
                                     <span>
                                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                                     </span>
-                                </div>
+                                </router-link>
                             </div>
                         </div>
                     </div>
                 </nav>
-                
                 <!-- route layout section  -->
                 <router-view class="p-3"></router-view>
-
             </main>
         </div>
     </div>
@@ -102,60 +115,24 @@ export default {
             sidebarActive: true,
             notiCon: false,
             profileCon: false,
+            user: JSON.parse(localStorage.getItem('user-data')),
             links: [
-                {
-                    path: '/admin',
-                    name: 'Dashboard'
-                },
-                {
-                    path: '/admin/profile',
-                    name: 'Profile'
-                },
-                {
-                    path: '/admin/category',
-                    name: 'Category'
-                },
-                {
-                    path: '/admin/giveaway',
-                    name: 'Giveaway'
-                },
-                {
-                    path: '/admin/promotion/list',
-                    name: 'Promotion'
-                },
-                {
-                    path: '/admin/product/list',
-                    name: 'Product'
-                },
-                {
-                    path: '/admin/order',
-                    name: 'Order'
-                },
-                {
-                    path: '/admin/register',
-                    name: 'Registers'
-                },
-                {
-                    path: '/admin/contact',
-                    name: 'Contact'
-                },
+                {path: '/admin', name: 'Dashboard', icon: '<i class="fa-solid fa-chart-simple"></i>'},
+                {path: '/admin/category', name: 'Category', icon: '<i class="fa-solid fa-cubes"></i>'},
+                {path: '/admin/giveaway', name: 'Giveaway', icon: '<i class="fa-solid fa-hand-holding-hand"></i>'},
+                {path: '/admin/promotion/list', name: 'Promotion', icon: '<i class="fa-solid fa-tags"></i>'},
+                {path: '/admin/product/list', name: 'Product', icon: '<i class="fa-solid fa-burger"></i>'},
+                {path: '/admin/slideshow/list', name: 'Slideshow', icon: '<i class="fa-regular fa-newspaper"></i>'},
+                {path: '/admin/payment', name: 'Payment', icon: '<i class="fa-solid fa-credit-card"></i>'},
+                {path: '/admin/order', name: 'Order', icon: '<i class="fa-solid fa-cubes-stacked"></i>'},
+                {path: '/admin/register', name: 'Registers', icon: '<i class="fa-solid fa-users"></i>'},
+                {path: '/admin/contact', name: 'Contact', icon: '<i class="fa-regular fa-envelope"></i>'},
+                {path: '/admin/feedback', name: 'Feedback', icon: '<i class="fa-solid fa-comments"></i>'},
             ],
             notiCons: [
-                {
-                    count: 8,
-                    head: 'New Orders',
-                    para: 'You have new orders.'
-                },
-                {
-                    count: 4,
-                    head: 'New Registers',
-                    para: 'You have new registers.'
-                },
-                {
-                    count: 1,
-                    head: 'New Messages',
-                    para: 'You have new contact messages.'
-                },
+                {count: 8, head: 'New Orders', para: 'You have new orders.'},
+                {count: 4, head: 'New Registers', para: 'You have new registers.'},
+                {count: 1, head: 'New Messages', para: 'You have new contact messages.'},
             ],
         }
     },
@@ -171,20 +148,7 @@ export default {
         showProfPopover() {
             this.notiCon = false
             this.profileCon ? this.profileCon = false : this.profileCon = true
-        }
+        },
     }
 }
 </script>
-
-<style>
-.sidebar-link .router-link-exact-active::after {
-    position: absolute;
-    left: 0%;
-    top: 0%;
-    content: '';
-    width: 100%;
-    height: 100%;
-    background: gray;
-    opacity: 0.2;
-}
-</style>

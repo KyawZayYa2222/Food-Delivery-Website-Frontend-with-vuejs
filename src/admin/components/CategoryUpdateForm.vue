@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'CategoryUpdateForm',
@@ -85,16 +85,13 @@ export default {
         },
 
         update() {
-            const token = localStorage.getItem('access-token');
             let formData = new FormData();
             formData.append('name', this.categoryName);
             formData.append('image', this.imageFile);
-            // console.log(formData);
             
-            axios.post('http://127.0.0.1:8000/api/admin/category/'+this.updItemId+'/update', formData, {
+            apiServiceWithAuth.post('/api/admin/category/'+this.updItemId+'/update', formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization' : `Bearer ${token}`,
                 }
             })
             .then((response) => {

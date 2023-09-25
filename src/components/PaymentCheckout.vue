@@ -41,23 +41,28 @@
             <button @click="paymentSubmit()" 
             class="w-full py-3 text-white bg-orange-600 hover:bg-orange-700 transition duration-150">Checkout Payment</button>
         </div>
+
+        <!-- feeback modal  -->
+        <feedback-form v-if="feedbackForm" class="z-[1010]" @close-modal="feedbackForm=false"/>
     </div>
 </template>
 
 <script>
-// import { cartList } from '@/cartList'
-import apiService from '@/apiService'
+import {apiServiceWithAuth} from '@/apiService'
+import FeedbackForm from './FeedbackForm.vue'
 
 export default {
     name: 'PaymentCheckout',
+    components: {
+        FeedbackForm
+    },
     props: ['totalItem'],
     data() {
         return {
             payment: 'paypal',
-            // totalItem: null,
             totalCost: null,
             deliveryAddress: '',
-            token: localStorage.getItem('access-token'),
+            feedbackForm: false,
             paymentTypes: [
                 {
                     type: 'paypal',
@@ -78,33 +83,30 @@ export default {
             ]
         }
     },
-    mounted() {
-        // this.getItemCount();
+    created() {
         this.getTotalCost();
-    },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        },
+        let userData = JSON.parse(localStorage.getItem('user-data'));
+        this.deliveryAddress = userData.address;
     },
     methods: {
         getTotalCost() {
-            apiService.get('/api/user/cart/total-cost', this.config)
+            apiServiceWithAuth.get('/api/user/cart/total-cost')
             .then(response => {
                 this.totalCost = response.data;
             })
         },
         paymentSubmit() {
-            apiService.post('/api/user/order/create', {
+            apiServiceWithAuth.post('/api/user/order/create', {
                 'payment_type': this.payment,
                 'location': this.deliveryAddress
-                }, this.config)
+                })
             .then(response => {
                 console.log(response);
                 this.$emit('orderSubmitted');
                 this.$toasted.show(response.data.message, {
                     className: ["alert-con", "!bg-green-500"]
                 });
+                this.feedbackForm = response.data.feedback;
             })
             .catch(error => {
                 console.log(error)
@@ -112,7 +114,8 @@ export default {
                     className: ["alert-con", "!bg-red-500"]
                 });
             })
-        }
+        },
+        
     }
 }
 </script>

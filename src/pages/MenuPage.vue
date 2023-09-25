@@ -1,5 +1,7 @@
 <template>
     <div>
+        <page-loader v-if="isLoading"/>
+
         <nav-bar ref="nav"></nav-bar>
 
         <product-detail-modal 
@@ -14,7 +16,7 @@
             <!-- <button class="absolute end-0 me-2"><i class="fa-solid fa-list fa-beat fa-lg"></i></button> -->
             <category-con @fetchByCate="fetchProductByCate"/>
             
-            <div class="container mx-auto xl:px-10 pt-4 pb-6">
+            <div class="container mx-auto xl:px-10 pt-6 pb-6 mt-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
                     <div v-for="(product, index) in products" :key="index" class="mx-auto">
                         <div class="cursor-pointer relative">
@@ -45,7 +47,7 @@
             @changepage="fetchProduct"/>
         </div>
 
-        <footer-section></footer-section>
+        <footer-section class="mt-10"></footer-section>
     </div>
 </template>
 
@@ -56,7 +58,8 @@ import CategoryCon from '@/components/CategoryCon.vue'
 import PaginatorOne from '@/admin/components/PaginatorOne.vue'
 import SearchMenu from '@/components/SearchMenu.vue'
 import ProductDetailModal from '@/components/ProductDetailModal.vue'
-import apiService from '@/apiService'
+import {apiService, apiServiceWithAuth} from '@/apiService'
+import PageLoader from '@/components/PageLoader.vue'
 
 
 export default {
@@ -67,7 +70,8 @@ export default {
         CategoryCon,
         PaginatorOne,
         SearchMenu,
-        ProductDetailModal
+        ProductDetailModal,
+        PageLoader,
     },
     data() {
         return {
@@ -77,18 +81,20 @@ export default {
             pagination: false,
             detailModal: false,
             detailProduct: null,
-            token: localStorage.getItem('access-token'),
+            isLoading: false,
         }
     },
-    computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        },
-    },
-    mounted() {
+    created() {
         this.fetchProduct();
+        this.toggleLoader();
     },
     methods: {
+        toggleLoader() {
+          this.isLoading = true;
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000);
+        },
         fetchProduct() {
             let vm = this;
             apiService.get('/api/product/list')
@@ -111,7 +117,7 @@ export default {
             this.detailProduct = product;
         },
         addToCart(productId) {
-            apiService.post('/api/user/cart/create', {'product_id': productId}, this.config)
+            apiServiceWithAuth.post('/api/user/cart/create', {'product_id': productId})
             .then(response => {
                 this.$refs.nav.getItemCount();
                 this.$toasted.show(response.data.message, {

@@ -34,14 +34,11 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiService} from '@/apiService'
 import {emailValidate, storeAuthInfo} from '@/formHandler.js'
 
 export default {
     name: 'LoginForm',
-    components: {
-        
-    },
     data() {
         return {
             email: null,
@@ -66,7 +63,7 @@ export default {
 
             if(!this.errors.email && !this.errors.password) {
                 this.loader = true;
-                axios.post('http://127.0.0.1:8000/api/login', {
+                apiService.post('/api/login', {
                     email: this.email,
                     password: this.password
                 })

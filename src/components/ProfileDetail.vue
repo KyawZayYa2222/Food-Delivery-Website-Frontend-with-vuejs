@@ -55,7 +55,7 @@
 
 
 <script>
-import axios from 'axios'
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'ProfileDetail',
@@ -66,14 +66,10 @@ export default {
             phone: '',
             address: '',
             errors: null,
-            token: localStorage.getItem('access-token'),
             // formDisabled: true,
         }
     },
     computed: {
-        config: function() {
-            return { headers : {'Authorization' : `Bearer ${this.token}`} };
-        },
         formData() {
             return {
                 name: this.name,
@@ -83,12 +79,12 @@ export default {
             }
         }
     },
-    mounted() {
+    created() {
         this.getUserData();
     },
     methods: {
         getUserData() {
-            axios.get('http://127.0.0.1:8000/api/user/details', this.config)
+            apiServiceWithAuth.get('/api/user/details')
             .then(response => {
                 console.log(response)
                 this.name = response.data.name
@@ -108,7 +104,7 @@ export default {
             console.log('cancel')
         },
         update() {
-            axios.put('http://127.0.0.1:8000/api/user/profile-info/update', this.formData, this.config)
+            apiServiceWithAuth.put('/api/user/profile-info/update', this.formData)
             .then(response => {
                 console.log(response)
             })

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'CategoryCreateForm',
@@ -41,15 +41,13 @@ export default {
         },
         createCategory() {
             const vm = this;
-            const token = localStorage.getItem('access-token');
             const formData = new FormData();
             this.categoryName != null ? formData.append('name', this.categoryName) : null;
             this.imageFile != null ? formData.append('image', this.imageFile) : null;
 
-            axios.post('http://127.0.0.1:8000/api/admin/category/create', formData, {
+            apiServiceWithAuth.post('/api/admin/category/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
                 }
             })
             .then(response => {

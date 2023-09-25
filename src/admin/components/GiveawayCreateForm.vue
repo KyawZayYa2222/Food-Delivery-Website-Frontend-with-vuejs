@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {apiServiceWithAuth} from '@/apiService'
 
 export default {
     name: 'GiveawayCreateForm',
@@ -40,15 +40,13 @@ export default {
         },
         createGiveaway() {
             const vm = this;
-            const token = localStorage.getItem('access-token');
             const formData = new FormData();
             formData.append('name', this.giveawayName);
             formData.append('image', this.imageFile);
 
-            axios.post('http://127.0.0.1:8000/api/admin/giveaway/create', formData, {
+            apiServiceWithAuth.post('/api/admin/giveaway/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
                 }
             })
             .then(response => {
