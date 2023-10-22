@@ -100,7 +100,7 @@ export default {
     methods: {
         fetchProduct(page=1) {
             let vm = this;
-            apiService.get('/api/product/list?' + page)
+            apiService.get('/api/product/list?page=' + page)
             .then(resp => {
                 console.log(resp)
                 vm.products = resp.data.data;

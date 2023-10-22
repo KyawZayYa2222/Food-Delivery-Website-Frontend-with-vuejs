@@ -72,8 +72,8 @@ export default {
         this.fetchFeedback();
     },
     methods: {
-        fetchFeedback() {
-            apiServiceWithAuth.get('/api/admin/feedback/list')
+        fetchFeedback(page) {
+            apiServiceWithAuth.get('/api/admin/feedback/list?page=' + page)
             .then(resp => {
                 this.feedbacks = resp.data.data;
                 this.paginationData = resp.data;

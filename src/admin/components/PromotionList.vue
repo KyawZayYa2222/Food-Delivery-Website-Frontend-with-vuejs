@@ -89,8 +89,9 @@ export default {
     methods: {
         fetchPromotion(page=1) {
             let vm = this;
-            apiServiceWithAuth.get('/api/admin/promotion/list/all?' + page)
+            apiServiceWithAuth.get('/api/admin/promotion/list/all?page=' + page)
             .then(response => {
+                console.log(response)
                 vm.promotions = response.data.data;
                 vm.pagination = true;
                 vm.paginationData = response.data;

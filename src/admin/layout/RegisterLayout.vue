@@ -34,28 +34,41 @@
                 </tbody>
             </table>
         </div>
+        <!-- paginator  -->
+        <paginator-one 
+        v-if="pagination" 
+        :data="paginationData" 
+        button-style="pagination-btn-blue"
+        @changepage="fetchOrder"/>
     </div>
 </template>
 
 <script>
 import {apiServiceWithAuth} from '@/apiService'
+import PaginatorOne from '../components/PaginatorOne.vue'
 
 export default {
     name: 'RegisterLayout',
+    components: {
+        PaginatorOne,
+    },
     data() {
         return {
             registers: null,
+            pagination: false,
+            paginationData: null,
         }
     },
     created() {
         this.fetchRegisteredUser()
     },
     methods: {
-        fetchRegisteredUser() {
-            apiServiceWithAuth.get('/api/admin/user/list')
-            .then(response => {
-                console.log(response)
-                this.registers = response.data.data;
+        fetchRegisteredUser(page) {
+            apiServiceWithAuth.get('/api/admin/user/list?page=' + page)
+            .then(resp => {
+                this.pagination = true;
+                this.paginationData = resp.data;
+                this.registers = resp.data.data;
             })
             .catch(error => {
                 console.log(error);

@@ -85,8 +85,8 @@ export default {
         this.fetchOrder()
     },
     methods: {
-        fetchOrder() {
-            apiServiceWithAuth.get('/api/admin/order/list')
+        fetchOrder(page) {
+            apiServiceWithAuth.get('/api/admin/order/list?page=' + page)
             .then(resp => {
                 console.log(resp)
                 this.pagination = true;

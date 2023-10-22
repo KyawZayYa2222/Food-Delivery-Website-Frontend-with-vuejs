@@ -95,21 +95,21 @@ export default {
             this.isLoading = false;
           }, 2000);
         },
-        fetchProduct() {
+        fetchProduct(page) {
             let vm = this;
-            apiService.get('/api/product/list')
-            .then(response => {
-                this.products = response.data.data;
+            apiService.get('/api/product/list?page=' + page)
+            .then(resp => {
+                this.products = resp.data.data;
                 vm.pagination = true;
-                vm.paginationData = response.data;
+                vm.paginationData = resp.data;
             })
         },
-        fetchProductByCate(response) {
-            this.products = response.data.data;
+        fetchProductByCate(resp) {
+            this.products = resp.data.data;
             this.pagination = false;
         },
-        fetchProductBySearch(response) {
-            this.products = response.data.data;
+        fetchProductBySearch(resp) {
+            this.products = resp.data.data;
             this.pagination = false;
         },
         showDetail(product) {
@@ -118,9 +118,9 @@ export default {
         },
         addToCart(productId) {
             apiServiceWithAuth.post('/api/user/cart/create', {'product_id': productId})
-            .then(response => {
+            .then(resp => {
                 this.$refs.nav.getItemCount();
-                this.$toasted.show(response.data.message, {
+                this.$toasted.show(resp.data.message, {
                     className: ["alert-con", "!bg-green-500"]
                 });
             })

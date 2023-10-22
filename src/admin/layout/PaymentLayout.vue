@@ -70,8 +70,8 @@ export default {
         this.fetchPayment()
     },
     methods: {
-        fetchPayment() {
-            apiServiceWithAuth.get('/api/admin/payment/list')
+        fetchPayment(page) {
+            apiServiceWithAuth.get('/api/admin/payment/list?page' + page)
             .then(resp => {
                 console.log(resp)
                 this.pagination = true;
